@@ -1,0 +1,1 @@
+{"appid":"100466412","appkey":"03e3dfa9d9333b291660b16245fd19aa","callback":"www.liuxos.com/index.php?r=site/qqLoginOk","scope":"get_user_info","errorReport":true,"storageType":"file","host":"localhost","user":"root","password":"root","database":"test"}
