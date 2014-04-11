@@ -1,0 +1,311 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang='zh-CN' xml:lang='zh-CN' xmlns='http://www.w3.org/1999/xhtml'>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta name="keywords" content="WE Blog Yii php 编程, php, yii, web"  />  
+        <meta name="description" content="WE Blog ,技术博客,记录使用Yii的技术点. PHP,mysql,javascript,css,jquery,ajax,jsonp,redis" />
+
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta charset="UTF-8">
+		<title>MP3</title>
+	    <script type="text/javascript" src="http://libs.baidu.com/jquery/1.7.1/jquery.min.js"></script>
+		<style>
+			*{
+				margin: 0;
+				padding: 0;
+				border: 0;
+			}
+            li{list-style-type:none;}
+			#box-player{
+				width: 670px;
+				height: 350px;
+				top: 10px;
+				left: 40%;
+				margin-left: -160px;
+				text-align: center;
+				position: absolute;
+				background: #f2f2f2;
+				background: #eee;
+                border: 1px solid rgb(201,224,237);
+			}
+			#handle-panel{
+                width: 320px;
+				position: absolute;
+				top: 50px;
+                left: 10px;
+				height: 295px;
+                overflow-y: auto;
+				line-height: 23px;
+				margin: -1px;
+                background-color: rgb(227,227,244);
+                border: 1px solid rgb(201,224,237);
+			}
+			#handle-panel a{
+				text-decoration: none;
+			}
+			#lrc-wrap{
+				height:340px;
+				overflow:hidden;
+				position: absolute;
+				width: 320px;
+				top: 5px;
+				left: 340px;
+				margin: -1px;
+                background-color: rgb(227,227,244);
+                border: 1px solid rgb(201,224,237);
+			}
+			#lrc-panel{
+				width: 100%;
+				height: auto;
+				list-style: none;
+				font: normal 12px/2 'SimSun';
+				position: absolute;
+				top:0;
+				left: 0;
+				margin-top: 150px;
+			}
+			.current{
+				color: #f60;
+			}
+			audio{
+				position:absolute;
+				left: 10px;
+				top: 5px;
+				width: 320px;
+				height: 40px;
+				margin: -1px;
+                background-color: rgb(227,227,244);
+                border: 1px solid rgb(201,224,237);
+			}
+            #handle-panel .li_m_name{
+				text-align: left;
+                margin-left: 10px;
+                color: rgb(100,100,100);
+                width: 100px;
+                height: 23px;
+                overflow: hidden;
+            }
+            .li_m:hover{
+                background: rgb(201,224,237);
+            }
+            .mp3_item:hover{
+                cursor: pointer;
+            }
+            .play_now{
+                background: rgb(201,224,237);
+            }
+            #handle-panel .play_now .li_m_name{
+                color: red;
+            }
+		</style>
+	</head>
+	<body>
+
+
+		<div id="box-player">
+			<audio onfocus="this.blur();" id="audio" controls="controls" autoplay="true">
+				  <bgsound data-type="mp3">
+			</audio>
+			<div id="lrc-wrap">
+	        	<ul id="lrc-panel"><li data-time="0" class="lrc">歌词。。。</li></ul>
+	        </div>
+		<div id="handle-panel"></div>
+		<!--[if IE]> <script>window.isIE=true;</script> <![endif]-->
+		</div>
+
+
+
+		<script>
+            var wwwname = ' - WE Blog';
+
+            function $list(list){
+                var r = '<ul>';
+                for(var i=0; i<list.length; i++){
+                    r += '<li class="li_m"><div class="li_m_name">' + renderListItem(list[i]) + '<div></li>';
+                }
+                return r + '</ul>';
+            }
+
+            function renderListItem(item){
+                return '<span onfocus="this.blur();" class="mp3_item" mdata_name='+item.name+' mdata_url='+item.url+' mdata_lrc_url='+item.lrcUrl+' onclick="start_mp3_link(this)">'+item.name+'</span>';
+            }
+
+
+			var bgsound = $("bgsound")[0];
+
+			/**
+			 * time 参数为空时，使用当前日期对比
+			**/
+			function locateLrc( t ){
+				if( !$.beginTime )return;
+				var time = t || ( new Date().getTime() - $.beginTime );
+				if(parseInt( $('#lrc-panel .current').attr('data-time') ) > time && $('#lrc-panel .current').prev().length ){
+					$('#lrc-panel .current').removeClass('current').prev().addClass('current');
+					$("#lrc-panel").stop(true).animate({top: 0 - parseInt( $('#lrc-panel .current').position().top ) });
+				}else if(parseInt( $('#lrc-panel .current').next().attr('data-time') ) < time ){
+					$('#lrc-panel .current').removeClass('current').next().addClass('current');
+					$("#lrc-panel").stop(true).animate({top: 0 - parseInt( $('#lrc-panel .current').position().top ) });
+				}
+			}
+
+            function getCttt(){
+                return $("#audio").currentTime;
+            }
+
+
+			/**
+			 * 设置MP3的路径，完成后监听加载状态并且开始bgsound播放时间的监听
+			**/
+			function loadMP3(url,lrcUrl){
+				$("#audio").attr({src : url});
+				$("#audio").loop = false;
+				if( !window.HTMLAudioElement ){
+					bgsound.src = url;
+					setInterval(locateLrc,100);
+				}
+				readyTimeout(lrcUrl);
+			}
+
+			function loadLRC(lrcUrl){
+
+
+				$.ajax({
+					url: "mp3_files/url.php?url=" + lrcUrl,
+					dataType: "text",
+					async: true,
+					success: function(data){
+						var lrc = data;
+                        if(lrc){
+                            $('#lrc-panel').html( "" );
+                            writeLrc(lrc);
+                        }else{
+                            preLoadLrc();
+                            setTimeout("loadLRC('" + lrcUrl + "')", 10000);
+                        }
+					}
+				});
+
+				
+			}
+
+            function writeLrc(lrc){
+                var list = lrc.split('\n');
+				for (var i = 0; i < list.length; i++) {
+					if( !$.trim(list[i]) )continue;
+					var word = list[i].split(/[\[\]]+/), time="0", pop = word.pop(), t = word.pop();
+					if( /\d{2}[:]\d{2}[.]\d{2}/.test( t ) ){
+						var m = t.split(/\D+/);
+						time = (m[2]|0)*10 + (m[1]|0)*1000 + (m[0]|0)*60000;
+					}
+
+					$('#lrc-panel .lrc').length
+						?
+						$('#lrc-panel .lrc').last().after( $( '<li data-time="'+ time +'" class="lrc">' + (pop || ' ') + '</li>') )
+						:
+						$('#lrc-panel').append( $( '<li data-time="'+ time +'" class="lrc current">' + (pop || ' ') + '</li>') );
+					/**/
+					for (var j = word.length-1, t=1; j > 0 && /\d{2}[:]\d{2}[.]\d{2}/.test( word[j] ); j--,t++) {
+						var m = word[j].split(/\D+/);
+						time = (m[2]|0)*10 + (m[1]|0)*1000 + (m[0]|0)*60000;
+						$('#lrc-panel .lrc'+t).length
+							?
+							$('#lrc-panel .lrc'+t).last().after( $( '<li data-time="'+ time +'" class="lrc'+t+'">' + (pop || ' ') + '</li>') )
+							:
+							$('#lrc-panel').append( $( '<li data-time="'+ time +'" class="lrc'+t+'">' + (pop || ' ') + '</li>') );
+
+					};
+				}
+            }
+
+			function readyTimeout(lrc_url){
+				if( 4 === $("#audio")[0].readyState || ("complete" === bgsound.readyState) ){
+					$.beginTime = new Date().getTime();
+					loadLRC(lrc_url); return;
+				}else{
+                    preLoadLrc();
+				}
+				setTimeout( 'readyTimeout("' + lrc_url + '")', 100 );
+			};
+            
+            function preLoadLrc(){
+                $("#lrc-panel").stop(true).html("").animate({top: 5}, "fast").html( "<li class='current'>歌词加载中......</li>");
+            }
+
+            $("#audio").bind('timeupdate', tud);
+            var aaa=0;
+            var cttt = 0;
+            function tud(){
+              var ttt = this.currentTime;
+              locateLrc(ttt*1000);
+              if(cttt == ttt){return;}
+              cttt = ttt;
+              if(this.duration == ttt){start_next_mp3();return false;}
+            }
+
+            var mp3list = [];
+            var mp3Index = 0;
+
+            function mystart(){
+                var index = 0;
+                if(arguments.length){
+                    index = arguments[0];
+                }
+                if(mp3list.length <= 0){
+                    getList();
+                }
+            }
+
+            function getList(){
+                $.ajax({
+                   type: "GET",
+                   url: "musiclist.php",
+                   dataType: "json",
+                   success: function(data){getListOk(data);}
+                });
+            }
+
+            function getListOk(data){
+                mp3list = data.list;
+                var tlist = $list(mp3list);
+                $("#handle-panel").html(tlist);
+            }
+
+            function start_mp3(music){
+			    $('title').html( music.name + wwwname );
+                loadMP3(music.url, music.lrcUrl);
+            }
+
+            function start_mp3_link(music){
+                $(".li_m").removeClass('play_now');
+                $(music).parents('.li_m').addClass('play_now');
+                var m = {};
+                m.url = $(music).attr('mdata_url');
+                m.lrcUrl = $(music).attr('mdata_lrc_url');
+                m.name = $(music).attr('mdata_name');
+                start_mp3(m);
+            }
+
+            function start_next_mp3(){
+                var play_now = $('.play_now')[0];
+                var m_li = $('.li_m');
+                var c = m_li.length;
+                var index;
+                for(k in m_li){
+                    if(play_now == m_li[k]){
+                        if(k == c-1){
+                            index = 0;
+                        }else{
+                            index = parseInt(k) + 1;
+                        }
+                        break;
+                    }
+                }
+                $(m_li[index]).find('.mp3_item').click();
+            }
+
+            $(document).ready(function(){
+                mystart();
+            });
+		</script>
+	</body>
+</html>

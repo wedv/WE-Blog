@@ -1,0 +1,228 @@
+﻿<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>恭喜，您的虚拟主机已经开通！</title>
+		<style>
+			body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, code, form, fieldset, legend, input, textarea, p, blockquote, th, td {
+				margin: 0;
+				padding: 0;
+			}
+			address, caption, cite, code, dfn, i, em, strong, th, var {
+				font-style: normal;
+				font-weight: normal;
+			}
+			fieldset, img {
+				border: 0;
+			}
+			img {
+				vertical-align: middle;
+			}
+			table {
+				font-size: inherit;
+				font: 100%;
+				border-collapse: collapse;
+				border-spacing: 0;
+			}
+			ol, ul, li {
+				list-style: none;
+			}
+			blockquote:before, blockquote:after, q:before, q:after {
+				content: "";
+			}
+			blockquote, q {
+				quotes: "" "";
+			}
+			q:before, q:after {
+				content: '';
+			}
+			abbr, acronym {
+				border: 0;
+				font-variant: normal;
+			}
+			select, input, button, textarea {
+				font-family: inherit;
+				font-size: inherit;
+				*font-size: 100%;
+				font-weight: inherit;
+			}
+			button, input[type=submit] {
+				cursor: pointer;
+			}
+			.clear:after {
+				content: ".";
+				display: block;
+				height: 0;
+				clear: both;
+				visibility: hidden;
+			}
+			.clear {
+				clear: both;
+				font-size: 0;
+				line-height: 0;
+				zoom: 1;
+			}
+			:focus {
+				outline: 0;
+			}
+			html, body {
+				width: 100%;
+				height: 100%;
+			}
+			body {
+				font: 14px/1.3em Microsoft YaHei, Segoe UI, Tahoma, Arial, Verdana, sans-serif;
+				color: #333;
+				background: url(images/bkg.gif) left top repeat;
+				text-align: left;
+				overflow: hidden;
+			}
+			a {
+				color: #000;
+				text-decoration: none;
+			}
+			h5 {
+				font-size: 26px;
+				font-weight: normal;
+				margin: 20px 0 0;
+				padding-bottom: 25px;
+			}
+			.content {
+				background: #fafafa;
+				border: 1px solid #999;
+				width: 640px;
+				/*min-height: 260px;*/
+				margin: 0 0 0 -320px;
+				position: absolute;
+				left: 50%;
+				top: 15%;
+			}
+			.main {
+				width: 640px;
+				padding: 40px 40px 30px 40px;
+				overflow: hidden;
+			}
+			.main .title {
+				width: 560px;
+				line-height: 26px;
+				font-size: 26px;
+				font-weight: normal;
+				margin: 0px 0 25px 0;
+				display: inline-block;
+			}
+			.main .text {
+				width: 560px;
+			}
+			.main .text p {
+				width: 100%;
+				padding-bottom: 5px;
+				line-height: 22px;
+				color: #555;
+				white-space: auto;
+				overflow: hidden;
+				display: inline-block;
+				word-break: break-all;
+			}
+			#site-url {
+				color: #999;
+			}
+			.main .action {
+				width: 560px;
+				line-height: 32px;
+				display: inline-block;
+				margin-top: 10px;
+			}
+			#refresh {
+				cursor: pointer;
+				font: 14px/1.3em Microsoft YaHei, Segoe UI, Tahoma, Arial, Verdana, sans-serif;
+				height: 32px;
+				line-height: 20px;
+				text-align: center;
+				color: #333;
+				width: 92px;
+			}
+
+			#shadow {
+				padding: 0;
+				width: 640px;
+				position: absolute;
+				left: 0px;
+				right: 0px;
+				bottom: -11px;
+				height: 10px;
+				overflow: hidden;
+				background: url(images/shadow-bottom.png);
+			}
+		</style>
+
+		<script type="text/javascript">
+            var url = "http://www.soso.com";
+            if (navigator.platform == "Win32" && navigator.appName == "Microsoft Internet Explorer" && window.attachEvent) {
+                window.attachEvent("onload", enableAlphaImages);
+            }
+            window.onload = function() {
+                var tempUrl = document.location.href;
+                var i = tempUrl.indexOf("#");
+                i = tempUrl.indexOf("&", i + 1);
+                i = tempUrl.indexOf("&", i + 1);
+                url = tempUrl.substring(i + 1);
+                document.getElementById("site-url").innerText = url;
+            }
+            function handleRefresh(e) {
+                document.location.href = url;
+            }
+
+            function enableAlphaImages() {
+                var rslt = navigator.appVersion.match(/MSIE (\d+\.\d+)/, '');
+                var itsAllGood = (rslt != null && Number(rslt[1]) >= 5.5);
+                if (itsAllGood) {
+                    for (var i = 0; i < document.all.length; i++) {
+                        var obj = document.all[i];
+                        var bg = obj.currentStyle.backgroundImage;
+                        var img = document.images[i];
+                        if (bg && bg.match(/\.png/i) != null) {
+                            var img = bg.substring(5, bg.length - 2);
+                            var offset = obj.style["background-position"];
+                            obj.style.filter = "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='" + img + "', sizingMethod='crop')";
+                            obj.style.backgroundImage = "url('images/pixel.gif')";
+                            //替换透明PNG的图片
+                            obj.style["background-position"] = offset;
+                            // reapply
+                        } else if (img && img.src.match(/\.png$/i) != null) {
+                            var src = img.src;
+                            img.style.width = img.width + "px";
+                            img.style.height = img.height + "px";
+                            img.style.filter = "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='" + src + "', sizingMethod='crop')"
+                            img.src = "images/pixel.gif";
+                            //替换透明PNG的图片
+                        }
+                    }
+                }
+            }
+		</script>
+	</head>
+	<body>
+		<div class="content"><div id="shadow"> </div>
+			<div class="main">
+				<div class="title">
+					看到本页面，说明您的虚拟主机已经成功开通 ! 
+				</div>
+				<div class="text">
+					<p>
+FTP登陆后，目录结构如下: <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|- <SPAN class=style9>web</SPAN> 
+                    &nbsp;&nbsp;&nbsp;&nbsp;这是网站根目录.请上传网页文件到这个文件夹里，网站就可以访问了.<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|- <SPAN 
+            class=style16>db </SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;上传rar格式的压缩包到此文件夹，就可以在线解压缩了.<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|- <span class="style28">log</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="style19">网站访问日志文件</span>,系统自动生成 .
+<p><BR>
+推荐您使用 <a href="http://www.baidu.com/#wd=filezilla&rsv_bp=0&tn=baidu&rsv_spt=3&ie=utf-8&rsv_n=2&rsv_sug3=1&rsv_sug4=64&rsv_sug1=1&inputT=1513" target="_blank">filezilla</a> 等常用FTP软件进行上传<BR>
+如果在上传中碰到无法列出目录等情况,请尝试着把上传软件的 PASV 模式关掉或者关闭被动模式,同时注意 FTP 端口是否被计算机的防火墙所阻挡..<BR><BR>
+如果在使用中有问题，请登陆我们的会员中心，在线提交工单，值班技术将为您解答！
+					</p>
+					<p>
+						再次感谢您，智慧的选择了我们的产品!
+					</p>
+				</div>
+			</div><!--main end-->
+		</div><!--content end-->
+	</body>
+</html>
